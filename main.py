@@ -220,7 +220,7 @@ def main():
     )
 
     # Setup optimizer
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.SGD(model.parameters(), lr=args.lr)
     print("optim Adam")
 
     # Loop over the epochs
