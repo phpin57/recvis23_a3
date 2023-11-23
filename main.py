@@ -10,7 +10,6 @@ from tqdm import tqdm
 
 from model_factory import ModelFactory
 
-
 def opts() -> argparse.ArgumentParser:
     """Option Handling Function."""
     parser = argparse.ArgumentParser(description="RecVis A3 training script")
@@ -24,7 +23,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--model_name",
         type=str,
-        default="basic_cnn",
+        default="resnet50",
         metavar="MOD",
         help="Name of the model for model and transform instantiation",
     )
@@ -38,7 +37,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--epochs",
         type=int,
-        default=11,
+        default=10,
         metavar="N",
         help="number of epochs to train (default: 10)",
     )
@@ -76,7 +75,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--num_workers",
         type=int,
-        default=2,
+        default=10,
         metavar="NW",
         help="number of workers for data loading",
     )
@@ -198,13 +197,6 @@ def main():
     else:
         print("Using CPU")
 
-    model_path = args.experiment + "/model_best.pth"
-    try:
-        model.load_state_dict(torch.load(model_path))
-        print(f"Loaded model weights from {model_path}")
-    except FileNotFoundError:
-        print(f"Model weights file {model_path} not found. Starting with a fresh model.")
-
     # Data initialization and loading
     train_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
@@ -220,8 +212,7 @@ def main():
     )
 
     # Setup optimizer
-    optimizer = optim.SGD(model.parameters(), lr=args.lr)
-    print("optim Adam")
+    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 
     # Loop over the epochs
     best_val_loss = 1e8
@@ -248,5 +239,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print("optim en cours")
     main()
