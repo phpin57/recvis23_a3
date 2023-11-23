@@ -76,7 +76,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--num_workers",
         type=int,
-        default=10,
+        default=2,
         metavar="NW",
         help="number of workers for data loading",
     )
