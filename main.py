@@ -200,7 +200,7 @@ def main():
 
     model_path = args.experiment + "/model_best.pth"
     try:
-        #model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(model_path))
         print(f"Loaded model weights from {model_path}")
     except FileNotFoundError:
         print(f"Model weights file {model_path} not found. Starting with a fresh model.")
