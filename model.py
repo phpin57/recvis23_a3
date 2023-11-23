@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms, models
+from torchvision.models import resnet50, ResNet50_Weights
+
 
 
 nclasses = 250
@@ -11,7 +13,7 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        resnet = models.resnet18(pretrained=True)
+        resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
         
         # Remove the last fully connected layer of ResNet
         self.features = nn.Sequential(*list(resnet.children())[:-1])

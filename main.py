@@ -198,6 +198,13 @@ def main():
     else:
         print("Using CPU")
 
+    model_path = args.experiment + "/model_best.pth"
+    try:
+        model.load_state_dict(torch.load(model_path))
+        print(f"Loaded model weights from {model_path}")
+    except FileNotFoundError:
+        print(f"Model weights file {model_path} not found. Starting with a fresh model.")
+
     # Data initialization and loading
     train_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
