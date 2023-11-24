@@ -131,10 +131,6 @@ def train(
             wandb.log({"train_loss": loss.data.item()}, step=batch_idx)
             total_loss += loss.item()
 
-            if batch_idx % args.log_interval == 0:
-                for name, param in model.named_parameters():
-                    wandb.log({f"param_{name}": param.clone().cpu().detach().numpy()}, step=batch_idx)
-
     accuracy = 100.0 * correct / len(train_loader.dataset)
     wandb.log({"train_accuracy": accuracy}, step=epoch)
 
