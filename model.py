@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
+from torchvision.models import resnet50, ResNet50_Weights
+
 
 nclasses = 250
 
@@ -25,13 +27,18 @@ class Net(nn.Module):
 class Model1(nn.Module):
     def __init__(self, backbone):
         super(Model1, self).__init__()
-        self.backbone = backbone
-        self.classifier = nn.Linear(1000, nclasses)
-    
+        resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
+        
+        # Remove the last fully connected layer of ResNet
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+        
+        # Add your custom fully connected layer for classification
+        self.fc = nn.Linear(resnet.fc.in_features, nclasses)
+
     def forward(self, x):
-        x = self.backbone(x)
-        x = F.relu(x)
-        x = self.classifier(x)
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
         return x
 
 
