@@ -104,6 +104,8 @@ def train(
     """
     model.train()
     correct = 0
+    total_loss = 0
+
     for batch_idx, (data, target) in enumerate(train_loader):
         if use_cuda:
             data, target = data.cuda(), target.cuda()
@@ -126,15 +128,25 @@ def train(
                 )
             
             )
-            wandb.log({ "loss": loss.data.item()})
+            wandb.log({"train_loss": loss.data.item()}, step=batch_idx)
+            total_loss += loss.item()
+
+            if batch_idx % args.log_interval == 0:
+                for name, param in model.named_parameters():
+                    wandb.log({f"param_{name}": param.clone().cpu().detach().numpy()}, step=batch_idx)
+
+    accuracy = 100.0 * correct / len(train_loader.dataset)
+    wandb.log({"train_accuracy": accuracy}, step=epoch)
+
+
     print(
         "\nTrain set: Accuracy: {}/{} ({:.0f}%)\n".format(
             correct,
             len(train_loader.dataset),
-            100.0 * correct / len(train_loader.dataset),
+            accuracy,
         )
     )
-    wandb.log({ "accuracy": 100.0 * correct / len(train_loader.dataset) })
+    
     
 
 
@@ -168,12 +180,19 @@ def validation(
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
     validation_loss /= len(val_loader.dataset)
+    
+    wandb.log({"val_loss": validation_loss})
+
+    accuracy = 100.0 * correct / len(val_loader.dataset)
+    # Log validation accuracy to W&B
+    wandb.log({"val_accuracy": accuracy})
+
     print(
         "\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)".format(
             validation_loss,
             correct,
             len(val_loader.dataset),
-            100.0 * correct / len(val_loader.dataset),
+            accuracy,
         )
     )
     return validation_loss
