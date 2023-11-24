@@ -12,7 +12,7 @@ class ModelFactory:
 
     def init_model(self):
         if self.model_name == "basic_cnn":
-            return Net()
+            return Model1(resnet50(ResNet50_Weights.IMAGENET1K_V2))
         if self.model_name[:8] == "resnet50":
             return Model1(resnet50(ResNet50_Weights.IMAGENET1K_V2))
         else:
