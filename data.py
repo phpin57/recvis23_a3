@@ -1,4 +1,6 @@
 import torchvision.transforms as transforms
+from torchvision.transforms import RandomResizedCrop, RandomHorizontalFlip, ColorJitter, RandomRotation, RandomVerticalFlip, RandomGrayscale, RandomPerspective
+
 
 # once the images are loaded, how do we pre-process them before being passed into the network
 # by default, we resize the images to 64 x 64 in size
@@ -27,6 +29,21 @@ data_transforms_resnet_augm = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.5),
     transforms.ColorJitter(brightness=32./255.,saturation=0.5),
     transforms.RandomRotation(20),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
+
+data_transforms_augmented = transforms.Compose([
+    RandomResizedCrop(224),
+    RandomHorizontalFlip(),
+    ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+    RandomRotation(degrees=15),
+    RandomVerticalFlip(),
+    RandomGrayscale(p=0.1),
+    RandomPerspective(distortion_scale=0.2, p=0.2),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],

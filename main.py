@@ -45,7 +45,7 @@ def opts() -> argparse.ArgumentParser:
     parser.add_argument(
         "--lr",
         type=float,
-        default=0.1,
+        default=0.001,
         metavar="LR",
         help="learning rate (default: 0.01)",
     )
@@ -233,7 +233,7 @@ def main():
     )
 
     # Setup optimizer
-    optimizer = optim.SGD(model.parameters(), lr=args.lr)
+    optimizer = optim.Adagrad(model.parameters(), lr=args.lr)
     print("optim Adam")
 
     # Loop over the epochs

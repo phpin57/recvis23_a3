@@ -25,7 +25,7 @@ class ModelFactory:
             #return data_transforms_resnet
             return data_transforms
         if self.model_name == "resnet50_augm":
-            return data_transforms_resnet_augm
+            return data_transforms_augmented
         else:
             raise NotImplementedError("Transform not implemented")
 
