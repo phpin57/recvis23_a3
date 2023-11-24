@@ -184,6 +184,15 @@ def main():
     # options
     args = opts()
 
+    run = wandb.init(
+    # Set the project where this run will be logged
+    project="my-awesome-project",
+    # Track hyperparameters and run metadata
+    config={
+        "learning_rate": args.lr,
+        "epochs": args.epochs,
+    })
+
     # Check if cuda is available
     use_cuda = torch.cuda.is_available()
 
