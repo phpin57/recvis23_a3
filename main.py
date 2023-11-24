@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torchvision import datasets
 from tqdm import tqdm
-
+import wandb
 from model_factory import ModelFactory
 
 
@@ -124,13 +124,16 @@ def train(
                     100.0 * batch_idx / len(train_loader),
                     loss.data.item(),
                 )
+            
             )
+            wandb.log({ "loss": loss.data.item()})
     print(
         "\nTrain set: Accuracy: {}/{} ({:.0f}%)\n".format(
             correct,
             len(train_loader.dataset),
             100.0 * correct / len(train_loader.dataset),
         )
+    wandb.log({ "accuracy": 100.0 * correct / len(train_loader.dataset) })
     )
 
 
