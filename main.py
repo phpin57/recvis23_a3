@@ -133,8 +133,9 @@ def train(
             len(train_loader.dataset),
             100.0 * correct / len(train_loader.dataset),
         )
-    wandb.log({ "accuracy": 100.0 * correct / len(train_loader.dataset) })
     )
+    wandb.log({ "accuracy": 100.0 * correct / len(train_loader.dataset) })
+    
 
 
 def validation(
