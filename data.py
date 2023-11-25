@@ -41,9 +41,6 @@ data_transforms_augmented = transforms.Compose([
     RandomHorizontalFlip(),
     ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
     RandomRotation(degrees=15),
-    RandomVerticalFlip(),
-    RandomGrayscale(p=0.1),
-    RandomPerspective(distortion_scale=0.2, p=0.2),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],

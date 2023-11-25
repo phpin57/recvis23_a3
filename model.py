@@ -47,7 +47,7 @@ class FineTunedNet2(nn.Module):
         super(FineTunedNet2, self).__init__()
         
         # Load the pre-trained ResNet model
-        resnet = models.resnet18(pretrained=True)
+        resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
         
         # Remove the last fully connected layer of ResNet
         self.features = nn.Sequential(*list(resnet.children())[:-1])
@@ -65,4 +65,55 @@ class FineTunedNet2(nn.Module):
         x = self.relu(x)
         x = self.dropout(x)
         x = self.fc2(x)
+        return x
+    
+class DeepSketch2(nn.Module):
+    def __init__(self):
+        super(DeepSketch2, self).__init__()
+        
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=0)
+        self.relu1 = nn.ReLU(inplace=True)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
+
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2)
+        self.relu2 = nn.ReLU(inplace=True)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2)
+
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1)
+        self.relu3 = nn.ReLU(inplace=True)
+
+        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=0)
+        self.relu4 = nn.ReLU(inplace=True)
+
+        self.maxpool3 = nn.MaxPool2d(kernel_size=3, stride=2)
+
+        self.conv5 = nn.Conv2d(512, 4096, kernel_size=5, stride=1, padding=0)
+        self.relu5 = nn.ReLU(inplace=True)
+        self.dropout = nn.Dropout()
+
+        self.conv6 = nn.Conv2d(4096, 250, kernel_size=1, stride=1, padding=0)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.relu1(x)
+        x = self.maxpool1(x)
+
+        x = self.conv2(x)
+        x = self.relu2(x)
+        x = self.maxpool2(x)
+
+        x = self.conv3(x)
+        x = self.relu3(x)
+
+        x = self.conv4(x)
+        x = self.relu4(x)
+
+        x = self.maxpool3(x)
+
+        x = self.conv5(x)
+        x = self.relu5(x)
+        x = self.dropout(x)
+
+        x = self.conv6(x)
+
         return x
