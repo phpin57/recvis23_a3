@@ -1,5 +1,5 @@
 """Python file to instantite the model and the transform that goes with it."""
-from model import Net, Model1, FineTunedNet2, DeepSketch2, WideResnet
+from model import Net, Model1, FineTunedNet2, WideResnet
 from data import *
 from torchvision import disable_beta_transforms_warning
 from torchvision.models import resnet50, ResNet50_Weights
@@ -17,8 +17,6 @@ class ModelFactory:
             return Model1(resnet50(ResNet50_Weights.IMAGENET1K_V2))
         if self.model_name == "tuned_resnet":
             return FineTunedNet2()
-        if self.model_name == "deepsketch":
-            return DeepSketch2()
         if self.model_name == "wide_resnet":
             return WideResnet()
         else:
