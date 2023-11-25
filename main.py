@@ -224,7 +224,7 @@ def main():
         model.cuda()
     else:
         print("Using CPU")
-    """
+    
     model_path = args.experiment + "/model_best.pth"
     try:
         model.load_state_dict(torch.load(model_path))
@@ -234,7 +234,7 @@ def main():
     except RuntimeError as e:
         print(f"Error loading model weights from {model_path}. Starting with a fresh model.")
         print(f"Error details: {e}")
-        """
+        
 
     # Data initialization and loading
     train_loader = torch.utils.data.DataLoader(
