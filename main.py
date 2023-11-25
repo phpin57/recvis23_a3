@@ -142,6 +142,7 @@ def train(
             accuracy,
         )
     )
+    return total_loss
     
     
 
@@ -206,6 +207,7 @@ def main():
     config={
         "learning_rate": args.lr,
         "epochs": args.epochs,
+        "model name" : args.model_name
     })
 
     # Check if cuda is available
@@ -232,6 +234,9 @@ def main():
         print(f"Loaded model weights from {model_path}")
     except FileNotFoundError:
         print(f"Model weights file {model_path} not found. Starting with a fresh model.")
+    except RuntimeError as e:
+        print(f"Error loading model weights from {model_path}. Starting with a fresh model.")
+        print(f"Error details: {e}")
 
     # Data initialization and loading
     train_loader = torch.utils.data.DataLoader(
@@ -255,9 +260,12 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        train(model, optimizer, train_loader, use_cuda, epoch, args)
+        total_loss=train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda)
+
+        wandb.log({"epoch_train_loss": total_loss,"epoch_val_loss":val_loss})
+
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
