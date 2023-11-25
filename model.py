@@ -71,7 +71,7 @@ class DeepSketch2(nn.Module):
     def __init__(self):
         super(DeepSketch2, self).__init__()
         
-        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=0)
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=0)
         self.relu1 = nn.ReLU(inplace=True)
         self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
 
