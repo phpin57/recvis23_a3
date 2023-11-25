@@ -132,7 +132,6 @@ def train(
             total_loss += loss.item()
 
     accuracy = 100.0 * correct / len(train_loader.dataset)
-    wandb.log({"train_accuracy": accuracy}, step=epoch)
 
 
     print(
@@ -142,7 +141,7 @@ def train(
             accuracy,
         )
     )
-    return total_loss
+    return accuracy
     
     
 
@@ -181,8 +180,6 @@ def validation(
     wandb.log({"val_loss": validation_loss})
 
     accuracy = 100.0 * correct / len(val_loader.dataset)
-    # Log validation accuracy to W&B
-    wandb.log({"val_accuracy": accuracy})
 
     print(
         "\nValidation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)".format(
@@ -192,7 +189,7 @@ def validation(
             accuracy,
         )
     )
-    return validation_loss
+    return accuracy,validation_loss
 
 
 def main():
@@ -261,11 +258,10 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        total_loss=train(model, optimizer, train_loader, use_cuda, epoch, args)
+        train_acc=train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda)
-
-        wandb.log({"epoch_train_loss": total_loss,"epoch_val_loss":val_loss})
+        val_acc,val_loss = validation(model, val_loader, use_cuda)
+        wandb.log({"train_accuracy": train_acc,"val_accuracy":val_acc}, step=epoch)
 
         if val_loss < best_val_loss:
             # save the best model for validation
