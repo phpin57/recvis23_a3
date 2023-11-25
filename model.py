@@ -97,7 +97,7 @@ class WideResnet(nn.Module):
 
         self.dropout1 = nn.Dropout(0.5)
 
-        self.conv1 = nn.Conv2d(1, 256, kernel_size=7, stride=2, padding=0)
+        self.conv1 = nn.Conv2d(3, 256, kernel_size=7, stride=2, padding=0)
         
         self.residual1 = ResidualUnit(256, 256)
         self.dropout2 = nn.Dropout(0.5)
