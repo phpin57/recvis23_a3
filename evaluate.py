@@ -70,7 +70,7 @@ def main() -> None:
         print("Using CPU")
 
     output_file = open(args.outfile, "w")
-    output_file.write("Id,Category\n")
+    output_file.write("Id,Label\n")
     for f in tqdm(os.listdir(test_dir)):
         if "png" in f:
             data = data_transforms(pil_loader(test_dir + "/" + f))

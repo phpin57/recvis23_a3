@@ -42,3 +42,27 @@ class Model1(nn.Module):
         return x
 
 
+class FineTunedNet2(nn.Module):
+    def __init__(self, num_classes=250, fc_hidden_size=1024, dropout_prob=0.5):
+        super(FineTunedNet2, self).__init__()
+        
+        # Load the pre-trained ResNet model
+        resnet = models.resnet18(pretrained=True)
+        
+        # Remove the last fully connected layer of ResNet
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+        
+        # Add custom fully connected layers
+        self.fc1 = nn.Linear(resnet.fc.in_features, fc_hidden_size)
+        self.relu = nn.ReLU(inplace=True)
+        self.dropout = nn.Dropout(p=dropout_prob)
+        self.fc2 = nn.Linear(fc_hidden_size, num_classes)
+        
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
