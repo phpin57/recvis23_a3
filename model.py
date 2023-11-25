@@ -67,53 +67,75 @@ class FineTunedNet2(nn.Module):
         x = self.fc2(x)
         return x
     
-class DeepSketch2(nn.Module):
-    def __init__(self):
-        super(DeepSketch2, self).__init__()
+class ResidualUnit(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(ResidualUnit, self).__init__()
         
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=0)
-        self.relu1 = nn.ReLU(inplace=True)
-        self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
-
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2)
-        self.relu2 = nn.ReLU(inplace=True)
-        self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2)
-
-        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1)
-        self.relu3 = nn.ReLU(inplace=True)
-
-        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=0)
-        self.relu4 = nn.ReLU(inplace=True)
-
-        self.maxpool3 = nn.MaxPool2d(kernel_size=3, stride=2)
-
-        self.conv5 = nn.Conv2d(512, 4096, kernel_size=5, stride=1, padding=0)
-        self.relu5 = nn.ReLU(inplace=True)
-        self.dropout = nn.Dropout()
-
-        self.conv6 = nn.Conv2d(4096, 250, kernel_size=1, stride=1, padding=0)
-
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
+        self.downsample = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride)
+        
     def forward(self, x):
+        identity = x
+
         x = self.conv1(x)
-        x = self.relu1(x)
-        x = self.maxpool1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+
+        if self.downsample is not None:
+            identity = self.downsample(identity)
+
+        x += identity
+        x = self.relu(x)
+
+        return x
+    
+class WideResnet(nn.Module):
+    def __init__(self):
+        super(WideResnet, self).__init__()
+
+        self.dropout1 = nn.Dropout(0.5)
+
+        self.conv1 = nn.Conv2d(1, 256, kernel_size=7, stride=2, padding=0)
+        
+        self.residual1 = ResidualUnit(256, 256)
+        self.dropout2 = nn.Dropout(0.5)
+        
+        self.residual2 = ResidualUnit(256, 256, stride=2)
+        self.dropout3 = nn.Dropout(0.5)
+        
+        self.residual3 = ResidualUnit(256, 512, stride=2)
+        self.dropout4 = nn.Dropout(0.5)
+        
+        self.conv2 = nn.Conv2d(512, 256, kernel_size=1)
+        self.conv3 = nn.Conv2d(256, 2048, kernel_size=3, stride=2, padding=1)
+        
+        self.avgpool = nn.AdaptiveAvgPool2d((8, 8))
+        self.dropout5 = nn.Dropout(0.5)
+        
+        self.fc = nn.Linear(2048 * 8 * 8, 250)
+        
+    def forward(self, x):
+        x = self.dropout1(x)
+        x = self.conv1(x)
+
+        x = self.residual1(x)
+        x = self.dropout2(x)
+
+        x = self.residual2(x)
+        x = self.dropout3(x)
+
+        x = self.residual3(x)
+        x = self.dropout4(x)
 
         x = self.conv2(x)
-        x = self.relu2(x)
-        x = self.maxpool2(x)
-
         x = self.conv3(x)
-        x = self.relu3(x)
 
-        x = self.conv4(x)
-        x = self.relu4(x)
+        x = self.avgpool(x)
+        x = self.dropout5(x)
 
-        x = self.maxpool3(x)
-
-        x = self.conv5(x)
-        x = self.relu5(x)
-        x = self.dropout(x)
-
-        x = self.conv6(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
 
         return x
