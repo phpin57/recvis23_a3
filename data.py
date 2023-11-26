@@ -24,10 +24,11 @@ data_transforms_resnet = transforms.Compose([
 ])
 
 data_transforms_resnet_augm = transforms.Compose([
+    transforms.Resize((256, 256)),
     transforms.Resize((224, 224)),
     transforms.RandomAffine(20),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.ColorJitter(brightness=32./255.,saturation=0.5),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
     transforms.RandomRotation(20),
     transforms.ToTensor(),
     transforms.Normalize(
