@@ -54,7 +54,7 @@ class FineTunedNet2(nn.Module):
         
         # Add custom fully connected layers
         self.fc1=nn.Linear(resnet.fc.in_features, fc_hidden_size)
-        self.avgpool=nn.AdaptiveAvgPool2d((7, 7))
+        self.avgpool=nn.AdaptiveAvgPool2d((1, 1))
         self.dropout = nn.Dropout(p=dropout_prob)
         self.fc2 = nn.Linear(fc_hidden_size, num_classes)
         
