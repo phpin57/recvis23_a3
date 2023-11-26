@@ -261,7 +261,7 @@ def main():
         train_acc=train(model, optimizer, train_loader, use_cuda, epoch, args)
         # validation loop
         val_acc,val_loss = validation(model, val_loader, use_cuda)
-        wandb.log({"train_accuracy": train_acc,"val_accuracy":val_acc}, step=epoch)
+        wandb.log({"train_accuracy": train_acc,"val_accuracy":val_acc})
 
         if val_loss < best_val_loss:
             # save the best model for validation
