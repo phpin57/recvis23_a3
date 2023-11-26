@@ -14,7 +14,7 @@ class ModelFactory:
         if self.model_name == "basic_cnn":
             return Model1(resnet50(ResNet50_Weights.IMAGENET1K_V2))
         if self.model_name[:8] == "resnet50":
-            return Model1(resnet50(ResNet50_Weights.IMAGENET1K_V2))
+            return Model1()
         if self.model_name == "tuned_resnet":
             return FineTunedNet2()
         if self.model_name == "wide_resnet":
@@ -31,7 +31,7 @@ class ModelFactory:
         if self.model_name == "resnet50_augm":
             return data_transforms_augmented
         if self.model_name == "tuned_resnet":
-            return data_transforms_augmented
+            return data_transforms
         if self.model_name == "wide_resnet":
             return data_transforms
         else:
