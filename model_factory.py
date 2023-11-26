@@ -31,7 +31,7 @@ class ModelFactory:
         if self.model_name == "resnet50_augm":
             return data_transforms_augmented
         if self.model_name == "tuned_resnet":
-            return data_transforms
+            return data_transforms_augmented
         if self.model_name == "wide_resnet":
             return data_transforms
         else:

@@ -37,15 +37,12 @@ data_transforms_resnet_augm = transforms.Compose([
 ])
 
 data_transforms_augmented = transforms.Compose([
-    RandomResizedCrop(224),
-    RandomHorizontalFlip(p=0.1),
-    ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
-    RandomRotation(degrees=15),
+    transforms.Resize((256, 256)),
+    transforms.RandomCrop((224, 224)),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2),
     transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
 ])
 
 
