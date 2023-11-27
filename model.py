@@ -153,7 +153,7 @@ class AttentionBlock(nn.Module):
         return attention * x
 
 class Model2(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes=250):
         super(Model2, self).__init__()
         self.resnet =  resnet50(weights=ResNet50_Weights.DEFAULT)
         

@@ -28,11 +28,8 @@ data_transforms_resnet_augm = transforms.Compose([
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
     transforms.RandomAffine(degrees=20, shear=0.2),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomVerticalFlip(),
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
     transforms.RandomRotation(20),
-    transforms.RandomGrayscale(p=0.1),
-    transforms.RandomApply([transforms.GaussianBlur(kernel_size=3)], p=0.2),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
