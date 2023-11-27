@@ -141,3 +141,43 @@ class WideResnet(nn.Module):
         x = self.fc(x)
 
         return x
+
+class AttentionBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(AttentionBlock, self).__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        attention = self.sigmoid(self.conv(x))
+        return attention * x
+
+class Model2(nn.Module):
+    def __init__(self, num_classes):
+        super(Model2, self).__init__()
+        self.resnet =  resnet50(weights=ResNet50_Weights.DEFAULT)
+        
+        # Remove the original fully connected layer
+        self.resnet = nn.Sequential(*list(self.resnet.children())[:-1])
+
+        # Add an attention block
+        self.attention_block = AttentionBlock(512, 512)
+
+        # Add more layers if needed
+        self.additional_layers = nn.Sequential(
+            nn.Conv2d(512, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Flatten()
+        )
+
+        # Final fully connected layer for classification
+        self.fc = nn.Linear(256, num_classes)
+
+    def forward(self, x):
+        x = self.resnet(x)
+        x = self.attention_block(x)
+        x = self.additional_layers(x)
+        x = self.fc(x)
+        return x
