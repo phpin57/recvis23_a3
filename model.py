@@ -159,7 +159,7 @@ class Model2(nn.Module):
         
         # Remove the original fully connected layer
         self.resnet = nn.Sequential(*list(self.resnet.children())[:-1])
-        num_resnet_channels = self.resnet.avgpool.num_features
+        num_resnet_channels = list(self.resnet.children())[-1][-1].num_features
         # Add an attention block
         self.attention_block = AttentionBlock(num_resnet_channels, num_resnet_channels)
 
