@@ -23,6 +23,10 @@ class Net(nn.Module):
         x = x.view(-1, 320)
         x = F.relu(self.fc1(x))
         return self.fc2(x)
+    
+
+
+
 
 class Model1(nn.Module):
     def __init__(self, backbone):
@@ -40,6 +44,8 @@ class Model1(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
+
+
 
 
 class FineTunedNet2(nn.Module):
@@ -69,6 +75,8 @@ class FineTunedNet2(nn.Module):
         x = self.fc2(x)
         return x
     
+
+
 class ResidualUnit(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(ResidualUnit, self).__init__()
@@ -140,45 +148,4 @@ class WideResnet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
 
-        return x
-
-class AttentionBlock(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(AttentionBlock, self).__init__()
-        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
-        self.sigmoid = nn.Sigmoid()
-
-    def forward(self, x):
-        attention = self.sigmoid(self.conv(x))
-        return attention * x
-
-class Model2(nn.Module):
-    def __init__(self, num_classes=250):
-        super(Model2, self).__init__()
-        self.resnet =  resnet50(weights=ResNet50_Weights.DEFAULT)
-        
-        # Remove the original fully connected layer
-        self.resnet = nn.Sequential(*list(self.resnet.children())[:-1])
-        
-        num_resnet_channels = self.resnet[-1][-1].in_channels
-
-        # Add an attention block
-        self.attention_block = AttentionBlock(num_resnet_channels, num_resnet_channels)
-
-        # Add more layers if needed
-        self.additional_layers = nn.Sequential(
-            nn.Conv2d(num_resnet_channels, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Flatten()
-        )
-        # Final fully connected layer for classification
-        self.fc = nn.Linear(256, num_classes)
-
-    def forward(self, x):
-        x = self.resnet(x)
-        x = self.attention_block(x)
-        x = self.additional_layers(x)
-        x = self.fc(x)
         return x
