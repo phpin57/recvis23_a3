@@ -159,19 +159,18 @@ class Model2(nn.Module):
         
         # Remove the original fully connected layer
         self.resnet = nn.Sequential(*list(self.resnet.children())[:-1])
-
+        num_resnet_channels = self.resnet[-1][-1].out_channels
         # Add an attention block
-        self.attention_block = AttentionBlock(512, 512)
+        self.attention_block = AttentionBlock(num_resnet_channels, num_resnet_channels)
 
         # Add more layers if needed
         self.additional_layers = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1),
+            nn.Conv2d(num_resnet_channels, 256, kernel_size=3, padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Flatten()
         )
-
         # Final fully connected layer for classification
         self.fc = nn.Linear(256, num_classes)
 
